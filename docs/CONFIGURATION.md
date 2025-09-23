@@ -185,3 +185,30 @@ Use Jina for enhanced content extraction:
 ```bash
 JINA_API_KEY=[YOUR_API_KEY]
 ```
+#### Azure OpenAI
+
+Environment variables (choose one of resource name or base URL):
+
+```bash
+AZURE_API_KEY=[YOUR_AZURE_API_KEY]
+
+# Option A: resource name only (subdomain, no protocol)
+# Example: ujao-ai
+AZURE_RESOURCE_NAME=ujao-ai
+
+# Option B: explicit base URL (preferred when behind proxies)
+# Include '/openai' suffix
+# Example: https://ujao-ai.openai.azure.com/openai
+AZURE_BASE_URL=https://ujao-ai.openai.azure.com/openai
+
+# Optional: API version
+# - Leave unset or set to 'v1' to use the GA v1 API (no api-version query)
+# - Set to a preview version if required, e.g. 2025-04-01-preview
+AZURE_API_VERSION=
+```
+
+Model profile:
+
+- Set `MORPHIC_MODELS_PROFILE=azure` to use Azure-specific model IDs.
+- In Azure, the model ID refers to your deployment name.
+- Edit `config/models/azure.json` and replace the `id` fields with your deployment names.

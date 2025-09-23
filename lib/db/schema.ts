@@ -298,3 +298,68 @@ export const feedback = pgTable(
 ).enableRLS()
 
 export type Feedback = InferSelectModel<typeof feedback>
+
+// Billing: Tracks whether a user is premium or free
+export const userBilling = pgTable(
+  'user_billing',
+  {
+    userId: varchar('user_id', { length: USER_ID_LENGTH }).primaryKey(),
+    status: varchar('status', {
+      length: VARCHAR_LENGTH,
+      enum: ['free', 'premium']
+    })
+      .notNull()
+      .default('free'),
+    provider: varchar('provider', { length: VARCHAR_LENGTH }),
+    planCode: varchar('plan_code', { length: VARCHAR_LENGTH }),
+    subscriptionCode: varchar('subscription_code', { length: VARCHAR_LENGTH }),
+    customerCode: varchar('customer_code', { length: VARCHAR_LENGTH }),
+    currentPeriodEnd: timestamp('current_period_end'),
+    updatedAt: timestamp('updated_at').defaultNow(),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  table => [
+    index('user_billing_status_idx').on(table.status),
+    pgPolicy('users_manage_own_billing', {
+      as: 'permissive',
+      for: 'all',
+      to: 'public',
+      using: sql`user_id = current_setting('app.current_user_id', true)`,
+      withCheck: sql`user_id = current_setting('app.current_user_id', true)`
+    })
+  ]
+).enableRLS()
+
+// Payments ledger (immutable)
+export const payments = pgTable(
+  'payments',
+  {
+    id: varchar('id', { length: ID_LENGTH })
+      .primaryKey()
+      .$defaultFn(() => generateId()),
+    userId: varchar('user_id', { length: USER_ID_LENGTH }),
+    reference: varchar('reference', { length: VARCHAR_LENGTH }).notNull(),
+    amount: integer('amount').notNull(),
+    currency: varchar('currency', { length: 10 }).notNull(),
+    status: varchar('status', { length: VARCHAR_LENGTH }).notNull(),
+    channel: varchar('channel', { length: VARCHAR_LENGTH }),
+    metadata: jsonb('metadata').$type<Record<string, any>>(),
+    createdAt: timestamp('created_at').notNull().defaultNow()
+  },
+  table => [
+    index('payments_user_id_idx').on(table.userId),
+    index('payments_reference_idx').on(table.reference),
+    pgPolicy('users_read_own_payments', {
+      as: 'permissive',
+      for: 'select',
+      to: 'public',
+      using: sql`user_id = current_setting('app.current_user_id', true)`
+    }),
+    pgPolicy('users_insert_own_payments', {
+      as: 'permissive',
+      for: 'insert',
+      to: 'public',
+      withCheck: sql`user_id = current_setting('app.current_user_id', true)`
+    })
+  ]
+).enableRLS()

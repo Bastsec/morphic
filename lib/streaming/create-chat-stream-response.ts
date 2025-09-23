@@ -110,6 +110,8 @@ export async function createChatStreamResponse(
 
   // Declare titlePromise in outer scope for onFinish access
   let titlePromise: Promise<string> | undefined
+  // Capture provider metadata (e.g., reasoning tokens) to attach on finish
+  let providerOpenAIMetadata: { responseId?: string; cachedPromptTokens?: number; reasoningTokens?: number } | undefined
 
   // Create the stream
   const stream = createUIMessageStream<UIMessage>({
@@ -188,7 +190,17 @@ export async function createChatStreamResponse(
           })
         )
 
-        const responseMessages = (await result.response).messages
+        const responseObj: any = await result.response
+        const responseMessages = responseObj.messages
+        // Extract provider-specific metadata (OpenAI-compatible)
+        const md = responseObj?.providerMetadata?.openai as any
+        if (md && typeof md === 'object') {
+          providerOpenAIMetadata = {
+            responseId: md.responseId,
+            cachedPromptTokens: md.cachedPromptTokens,
+            reasoningTokens: md.reasoningTokens
+          }
+        }
         perfTime('researchAgent.stream completed', llmStart)
         // Generate related questions
         if (responseMessages && responseMessages.length > 0) {
@@ -223,6 +235,23 @@ export async function createChatStreamResponse(
     },
     onFinish: async ({ responseMessage, isAborted }) => {
       if (isAborted || !responseMessage) return
+
+      // Attach provider token metadata (thinking/reasoning tokens) to the UI message
+      if (providerOpenAIMetadata) {
+        const existingMetadata: any = (responseMessage.metadata ?? {}) as any
+        responseMessage.metadata = {
+          ...existingMetadata,
+          thinkingTokens:
+            providerOpenAIMetadata.reasoningTokens ?? existingMetadata?.thinkingTokens,
+          provider: {
+            ...(existingMetadata.provider ?? {}),
+            openai: {
+              ...(existingMetadata.provider?.openai ?? {}),
+              ...providerOpenAIMetadata
+            }
+          }
+        }
+      }
 
       // Persist stream results to database
       await persistStreamResults(

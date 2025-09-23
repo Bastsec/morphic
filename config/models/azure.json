@@ -1,0 +1,25 @@
+{
+  "version": 1,
+  "models": {
+    "types": {
+      "speed": {
+        "id": "gpt-5-chat",
+        "name": "GPT-5 Chat",
+        "provider": "Azure",
+        "providerId": "azure"
+      },
+      "quality": {
+        "id": "gpt-5",
+        "name": "GPT-5",
+        "provider": "Azure",
+        "providerId": "azure"
+      }
+    },
+    "relatedQuestions": {
+      "id": "gpt-4.1",
+      "name": "GPT-4.1",
+      "provider": "Azure",
+      "providerId": "azure"
+    }
+  }
+}

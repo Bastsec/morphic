@@ -12,11 +12,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "migrate": "bun run lib/db/migrate.ts",
+    "db:migrate": "bun run lib/db/migrate.ts",
+    "db:migrate:restricted": "DATABASE_URL=$DATABASE_RESTRICTED_URL bun run lib/db/migrate.ts",
     "test": "NODE_ENV=test vitest run",
     "test:watch": "vitest --watch",
     "chat": "bun run scripts/chat-cli.ts"
   },
   "dependencies": {
+    "@ai-sdk/azure": "^2.0.13",
     "@ai-sdk/anthropic": "^2.0.15",
     "@ai-sdk/gateway": "^1.0.20",
     "@ai-sdk/google": "^2.0.13",

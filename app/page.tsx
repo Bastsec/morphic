@@ -1,6 +1,7 @@
 import { generateId } from '@/lib/db/schema'
 
 import { ChangelogBanner } from '@/components/changelog-banner'
+import PremiumBanner from '@/components/premium-banner'
 import { Chat } from '@/components/chat'
 
 export default async function Page() {
@@ -9,6 +10,7 @@ export default async function Page() {
     <>
       <Chat id={id} />
       <ChangelogBanner />
+      <PremiumBanner />
     </>
   )
 }
