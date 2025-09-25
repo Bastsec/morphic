@@ -2,6 +2,8 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createServerClient } from '@supabase/ssr'
 
+import { buildRedirectUrl } from '@/lib/auth/redirect'
+
 import { getSupabaseServerConfig } from './config'
 
 export async function updateSession(request: NextRequest) {
@@ -57,10 +59,13 @@ export async function updateSession(request: NextRequest) {
 
   // Redirect to login if the user is not authenticated and the path is not public
   if (!user && !publicPaths.some(path => pathname.startsWith(path))) {
-    // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/auth/login'
-    return NextResponse.redirect(url)
+    const redirectUrl = buildRedirectUrl(
+      request,
+      request.nextUrl.origin,
+      '/auth/login'
+    )
+
+    return NextResponse.redirect(redirectUrl)
   }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.

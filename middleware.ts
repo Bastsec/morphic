@@ -1,19 +1,15 @@
-import { updateSession } from '@/lib/supabase/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { getRequestBaseUrl } from '@/lib/auth/redirect'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
+import { updateSession } from '@/lib/supabase/middleware'
 
 export async function middleware(request: NextRequest) {
-  // Get the protocol from X-Forwarded-Proto header or request protocol
-  const protocol =
-    request.headers.get('x-forwarded-proto') || request.nextUrl.protocol
-
-  // Get the host from X-Forwarded-Host header or request host
-  const host =
-    request.headers.get('x-forwarded-host') || request.headers.get('host') || ''
-
-  // Construct the base URL - ensure protocol has :// format
-  const baseUrl = `${protocol}${protocol.endsWith(':') ? '//' : '://'}${host}`
+  const baseUrlString = getRequestBaseUrl(request, request.nextUrl.origin)
+  const normalizedBaseUrl = new URL(baseUrlString)
+  const protocol = normalizedBaseUrl.protocol.replace(':', '')
+  const host = normalizedBaseUrl.host
+  const baseUrl = normalizedBaseUrl.origin
 
   // Create a response
   let response: NextResponse
