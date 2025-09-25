@@ -4,6 +4,7 @@ import { Inter as FontSans } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 
 import { createClient } from '@/lib/supabase/server'
+import { isSupabaseConfigured } from '@/lib/supabase/config'
 import { cn } from '@/lib/utils'
 
 import { SidebarProvider } from '@/components/ui/sidebar'
@@ -54,10 +55,7 @@ export default async function RootLayout({
   children: React.ReactNode
 }>) {
   let user = null
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (supabaseUrl && supabaseAnonKey) {
+  if (isSupabaseConfigured()) {
     const supabase = await createClient()
     const {
       data: { user: supabaseUser }

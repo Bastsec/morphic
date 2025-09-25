@@ -2,6 +2,7 @@ import { Langfuse } from 'langfuse'
 
 import { updateMessageFeedback } from '@/lib/actions/feedback'
 import { createClient } from '@/lib/supabase/server'
+import { isSupabaseConfigured } from '@/lib/supabase/config'
 import { isTracingEnabled } from '@/lib/utils/telemetry'
 
 export async function POST(req: Request) {
@@ -46,10 +47,7 @@ export async function POST(req: Request) {
 
     // Get current user for RLS context
     let userId: string | null = null
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-    if (supabaseUrl && supabaseAnonKey) {
+    if (isSupabaseConfigured()) {
       const supabase = await createClient()
       const {
         data: { user }

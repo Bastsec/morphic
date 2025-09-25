@@ -1,6 +1,8 @@
 import { updateSession } from '@/lib/supabase/middleware'
 import { type NextRequest, NextResponse } from 'next/server'
 
+import { isSupabaseConfigured } from '@/lib/supabase/config'
+
 export async function middleware(request: NextRequest) {
   // Get the protocol from X-Forwarded-Proto header or request protocol
   const protocol =
@@ -17,10 +19,7 @@ export async function middleware(request: NextRequest) {
   let response: NextResponse
 
   // Handle Supabase session if configured
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
-  const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
-
-  if (supabaseUrl && supabaseAnonKey) {
+  if (isSupabaseConfigured()) {
     response = await updateSession(request)
   } else {
     // If Supabase is not configured, just pass the request through
