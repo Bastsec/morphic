@@ -1,11 +1,17 @@
-import { Metadata } from "next"
+import { Metadata } from 'next'
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import SubscribeButton from "@/components/payments/subscribe-button"
+import SubscribeButton from '@/components/payments/subscribe-button'
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle
+} from '@/components/ui/card'
 
 export const metadata: Metadata = {
-  title: "Pricing • Morphic",
-  description: "Upgrade to Premium and support Morphic."
+  title: 'Pricing • Bastion',
+  description: 'Upgrade to Premium and support Bastion.'
 }
 
 export default function PricingPage() {
@@ -14,7 +20,9 @@ export default function PricingPage() {
       <div className="w-full max-w-3xl">
         <div className="mb-8">
           <h1 className="text-3xl font-semibold tracking-tight">Pricing</h1>
-          <p className="text-muted-foreground mt-2">Simple, transparent pricing. Cancel anytime.</p>
+          <p className="text-muted-foreground mt-2">
+            Simple, transparent pricing. Cancel anytime.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -40,7 +48,9 @@ export default function PricingPage() {
           <Card className="border-primary/50">
             <CardHeader>
               <CardTitle>Premium</CardTitle>
-              <CardDescription>Support Morphic and unlock more.</CardDescription>
+              <CardDescription>
+                Unlock All features at A Discounted Price.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2 mb-4">
@@ -63,4 +73,3 @@ export default function PricingPage() {
     </div>
   )
 }
-

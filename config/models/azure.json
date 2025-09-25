@@ -3,8 +3,8 @@
   "models": {
     "types": {
       "speed": {
-        "id": "gpt-5-chat",
-        "name": "GPT-5 Chat",
+        "id": "gpt-5-mini",
+        "name": "GPT-5 mini",
         "provider": "Azure",
         "providerId": "azure"
       },
@@ -12,7 +12,13 @@
         "id": "gpt-5",
         "name": "GPT-5",
         "provider": "Azure",
-        "providerId": "azure"
+        "providerId": "azure",
+        "providerOptions": {
+          "azure": {
+            "reasoningEffort": "high",
+            "reasoningSummary": "auto"
+          }
+        }
       }
     },
     "relatedQuestions": {

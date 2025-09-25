@@ -1,10 +1,10 @@
-"use client"
+'use client'
 
-import Link from "next/link"
-import * as React from "react"
-import { X, Crown } from "lucide-react"
+import { Crown, X } from 'lucide-react'
+import Link from 'next/link'
+import * as React from 'react'
 
-const DISMISS_KEY = "premium_banner_v1_dismissed"
+const DISMISS_KEY = 'premium_banner_v1_dismissed'
 
 /**
  * Small floating banner to promote Premium. We keep it subtle and dismissible,
@@ -14,7 +14,8 @@ export default function PremiumBanner() {
   const [visible, setVisible] = React.useState(false)
 
   React.useEffect(() => {
-    const isDismissed = typeof window !== 'undefined' && localStorage.getItem(DISMISS_KEY)
+    const isDismissed =
+      typeof window !== 'undefined' && localStorage.getItem(DISMISS_KEY)
     if (isDismissed) return
 
     const check = async () => {
@@ -55,7 +56,9 @@ export default function PremiumBanner() {
           </div>
           <div className="text-sm leading-tight">
             <p className="font-medium">Upgrade to Premium</p>
-            <p className="text-muted-foreground">KES 600/mo • Support Morphic • Higher limits</p>
+            <p className="text-muted-foreground">
+              KES 600/mo • Higher limits & Premium Models
+            </p>
             <div className="mt-2">
               <Link
                 href="/pricing"
@@ -70,4 +73,3 @@ export default function PremiumBanner() {
     </div>
   )
 }
-

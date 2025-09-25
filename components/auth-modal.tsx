@@ -1,6 +1,6 @@
 'use client'
 
-import Link from 'next/link'
+import { useState } from 'react'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -10,7 +10,8 @@ import {
   DialogHeader,
   DialogTitle
 } from '@/components/ui/dialog'
-import { IconLogo } from '@/components/ui/icons'
+import { IconGoogle, IconLogo } from '@/components/ui/icons'
+import { createClient } from '@/lib/supabase/client'
 
 interface AuthModalProps {
   open: boolean
@@ -18,6 +19,30 @@ interface AuthModalProps {
 }
 
 export function AuthModal({ open, onOpenChange }: AuthModalProps) {
+  const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+
+  const handleGoogleAuth = async () => {
+    const supabase = createClient()
+    setIsLoading(true)
+    setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${location.origin}/auth/oauth`
+        }
+      })
+      if (error) throw error
+    } catch (error: unknown) {
+      setError(
+        error instanceof Error ? error.message : 'An OAuth error occurred'
+      )
+      setIsLoading(false)
+    }
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
@@ -26,19 +51,26 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
             <IconLogo className="size-14" />
           </div>
           <DialogTitle className="text-xl font-semibold">
-            Continue with Morphic
+            Create a Free Account with Us
           </DialogTitle>
           <DialogDescription className="text-muted-foreground">
-            To use Morphic, sign in to your account or create a new one.
+            Sign in or create your account using Google.
           </DialogDescription>
         </DialogHeader>
         <div className="mt-6 space-y-3">
-          <Button asChild className="w-full" size="lg">
-            <Link href="/auth/sign-up">Sign Up</Link>
+          <Button
+            className="w-full"
+            size="lg"
+            variant="outline"
+            onClick={handleGoogleAuth}
+            disabled={isLoading}
+          >
+            <IconGoogle className="mr-2 h-4 w-4" />
+            {isLoading ? 'Redirecting...' : 'Continue with Google'}
           </Button>
-          <Button asChild variant="outline" className="w-full" size="lg">
-            <Link href="/auth/login">Sign In</Link>
-          </Button>
+          {error ? (
+            <p className="text-center text-sm text-red-500">{error}</p>
+          ) : null}
         </div>
       </DialogContent>
     </Dialog>
