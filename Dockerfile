@@ -16,6 +16,8 @@ RUN bun run build
 FROM oven/bun:1.2.12 AS runner
 WORKDIR /app
 
+
+ENV DEBUG="next:*"
 # Copy only necessary files from builder
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
