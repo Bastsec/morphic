@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 
-import SubscribeButton from '@/components/payments/subscribe-button'
 import {
   Card,
   CardContent,
@@ -8,6 +7,8 @@ import {
   CardHeader,
   CardTitle
 } from '@/components/ui/card'
+
+import SubscribeButton from '@/components/payments/subscribe-button'
 
 export const metadata: Metadata = {
   title: 'Pricing • Bastion',

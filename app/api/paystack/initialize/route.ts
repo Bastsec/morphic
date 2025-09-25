@@ -1,5 +1,6 @@
-import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+
+import { createClient } from '@/lib/supabase/server'
 
 const PAYSTACK_SECRET_KEY = process.env.PAYSTACK_SECRET_KEY
 const SITE_URL =

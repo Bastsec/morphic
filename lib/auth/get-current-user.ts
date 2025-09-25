@@ -1,5 +1,5 @@
-import { createClient } from '@/lib/supabase/server'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
+import { createClient } from '@/lib/supabase/server'
 import { perfLog } from '@/lib/utils/perf-logging'
 import { incrementAuthCallCount } from '@/lib/utils/perf-tracking'
 

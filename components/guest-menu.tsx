@@ -4,6 +4,9 @@ import { useState } from 'react'
 
 import { Link2, Palette, Settings2 } from 'lucide-react'
 
+import { createClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils'
+
 import { Button } from '@/components/ui/button'
 import {
   DropdownMenu,
@@ -16,8 +19,6 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import { IconGoogle } from '@/components/ui/icons'
-import { createClient } from '@/lib/supabase/client'
-import { cn } from '@/lib/utils'
 
 import { ExternalLinkItems } from './external-link-items'
 import { ThemeMenuItems } from './theme-menu-items'

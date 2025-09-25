@@ -6,6 +6,7 @@ import { User } from '@supabase/supabase-js'
 import { Link2, LogOut, Palette } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase/client'
+import { cn } from '@/lib/utils'
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import {
@@ -19,8 +20,6 @@ import {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
-
-import { cn } from '@/lib/utils'
 
 import { Button } from './ui/button'
 import { ExternalLinkItems } from './external-link-items'

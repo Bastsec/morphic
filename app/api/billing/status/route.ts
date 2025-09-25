@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
-import { createClient } from "@/lib/supabase/server"
+
+import { eq } from "drizzle-orm"
+
 import { db } from "@/lib/db"
 import { userBilling } from "@/lib/db/schema"
-import { eq } from "drizzle-orm"
+import { createClient } from "@/lib/supabase/server"
 
 export async function GET() {
   try {

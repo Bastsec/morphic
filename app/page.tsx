@@ -1,8 +1,8 @@
 import { generateId } from '@/lib/db/schema'
 
 import { ChangelogBanner } from '@/components/changelog-banner'
-import PremiumBanner from '@/components/premium-banner'
 import { Chat } from '@/components/chat'
+import PremiumBanner from '@/components/premium-banner'
 
 export default async function Page() {
   const id = generateId()

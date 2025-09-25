@@ -3,8 +3,8 @@
 import { db } from '@/lib/db'
 import { feedback, generateId } from '@/lib/db/schema'
 import { withOptionalRLS } from '@/lib/db/with-rls'
-import { createClient } from '@/lib/supabase/server'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
+import { createClient } from '@/lib/supabase/server'
 
 export async function submitFeedback(data: {
   sentiment: 'positive' | 'neutral' | 'negative'

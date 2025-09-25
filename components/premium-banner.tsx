@@ -1,8 +1,9 @@
 'use client'
 
-import { Crown, X } from 'lucide-react'
-import Link from 'next/link'
 import * as React from 'react'
+import Link from 'next/link'
+
+import { Crown, X } from 'lucide-react'
 
 const DISMISS_KEY = 'premium_banner_v1_dismissed'
 

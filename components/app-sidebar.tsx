@@ -1,8 +1,7 @@
-import Link from 'next/link'
 import { Suspense } from 'react'
+import Link from 'next/link'
 
 import type { User } from '@supabase/supabase-js'
-
 import { Crown, Plus } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
@@ -21,8 +20,8 @@ import {
 
 import { ChatHistorySection } from './sidebar/chat-history-section'
 import { ChatHistorySkeleton } from './sidebar/chat-history-skeleton'
-import GuestMenu from './guest-menu'
 import { IconLogo } from './ui/icons'
+import GuestMenu from './guest-menu'
 import UserMenu from './user-menu'
 
 interface AppSidebarProps {

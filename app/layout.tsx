@@ -3,8 +3,8 @@ import { Inter as FontSans } from 'next/font/google'
 
 import { Analytics } from '@vercel/analytics/next'
 
-import { createClient } from '@/lib/supabase/server'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
+import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/utils'
 
 import { SidebarProvider } from '@/components/ui/sidebar'

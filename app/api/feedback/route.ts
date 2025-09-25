@@ -1,8 +1,8 @@
 import { Langfuse } from 'langfuse'
 
 import { updateMessageFeedback } from '@/lib/actions/feedback'
-import { createClient } from '@/lib/supabase/server'
 import { isSupabaseConfigured } from '@/lib/supabase/config'
+import { createClient } from '@/lib/supabase/server'
 import { isTracingEnabled } from '@/lib/utils/telemetry'
 
 export async function POST(req: Request) {

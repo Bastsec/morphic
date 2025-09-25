@@ -2,6 +2,8 @@
 
 import { useState } from 'react'
 
+import { createClient } from '@/lib/supabase/client'
+
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -11,7 +13,6 @@ import {
   DialogTitle
 } from '@/components/ui/dialog'
 import { IconGoogle, IconLogo } from '@/components/ui/icons'
-import { createClient } from '@/lib/supabase/client'
 
 interface AuthModalProps {
   open: boolean
