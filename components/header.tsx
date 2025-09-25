@@ -4,8 +4,6 @@
 import React, { useState } from 'react'
 import { usePathname } from 'next/navigation'
 
-import { User } from '@supabase/supabase-js'
-
 import { cn } from '@/lib/utils'
 
 import { useSidebar } from '@/components/ui/sidebar'
@@ -13,14 +11,7 @@ import { useSidebar } from '@/components/ui/sidebar'
 import { Button } from './ui/button'
 import { FeedbackModal } from './feedback-modal'
 // import { Button } from './ui/button' // No longer needed directly here for Sign In button
-import GuestMenu from './guest-menu' // Import the new GuestMenu component
-import UserMenu from './user-menu'
-
-interface HeaderProps {
-  user: User | null
-}
-
-export const Header: React.FC<HeaderProps> = ({ user }) => {
+export const Header: React.FC = () => {
   const { open } = useSidebar()
   const pathname = usePathname()
   const [feedbackOpen, setFeedbackOpen] = useState(false)
@@ -38,8 +29,8 @@ export const Header: React.FC<HeaderProps> = ({ user }) => {
         {/* This div can be used for a logo or title on the left if needed */}
         <div></div>
 
-        <div className="flex items-center gap-2">
-          {isRootPage && (
+        {isRootPage && (
+          <div className="flex items-center gap-2">
             <Button
               variant="outline"
               size="sm"
@@ -47,9 +38,8 @@ export const Header: React.FC<HeaderProps> = ({ user }) => {
             >
               Feedback
             </Button>
-          )}
-          {user ? <UserMenu user={user} /> : <GuestMenu />}
-        </div>
+          </div>
+        )}
       </header>
 
       {isRootPage && (

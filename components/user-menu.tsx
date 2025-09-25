@@ -20,15 +20,18 @@ import {
   DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 
+import { cn } from '@/lib/utils'
+
 import { Button } from './ui/button'
 import { ExternalLinkItems } from './external-link-items'
 import { ThemeMenuItems } from './theme-menu-items'
 
 interface UserMenuProps {
   user: User
+  placement?: 'header' | 'sidebar'
 }
 
-export default function UserMenu({ user }: UserMenuProps) {
+export default function UserMenu({ user, placement = 'header' }: UserMenuProps) {
   const router = useRouter()
   const userName =
     user.user_metadata?.full_name || user.user_metadata?.name || 'User'
@@ -56,17 +59,49 @@ export default function UserMenu({ user }: UserMenuProps) {
     router.refresh()
   }
 
+  const isSidebar = placement === 'sidebar'
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" className="relative h-6 w-6 rounded-full">
-          <Avatar className="h-6 w-6">
-            <AvatarImage src={avatarUrl} alt={userName} />
-            <AvatarFallback>{getInitials(userName, user.email)}</AvatarFallback>
-          </Avatar>
-        </Button>
+        {isSidebar ? (
+          <button
+            type="button"
+            className={cn(
+              'flex w-full items-center gap-3 rounded-md px-2 py-2 text-left text-sm transition-colors',
+              'hover:bg-sidebar-accent hover:text-sidebar-accent-foreground',
+              'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sidebar-ring'
+            )}
+          >
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={avatarUrl} alt={userName} />
+              <AvatarFallback>{getInitials(userName, user.email)}</AvatarFallback>
+            </Avatar>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium leading-none truncate">
+                {userName}
+              </p>
+              <p className="text-xs text-muted-foreground truncate">
+                {user.email}
+              </p>
+            </div>
+          </button>
+        ) : (
+          <Button variant="ghost" className="relative h-6 w-6 rounded-full">
+            <Avatar className="h-6 w-6">
+              <AvatarImage src={avatarUrl} alt={userName} />
+              <AvatarFallback>{getInitials(userName, user.email)}</AvatarFallback>
+            </Avatar>
+          </Button>
+        )}
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-60" align="end" forceMount>
+      <DropdownMenuContent
+        className="w-60"
+        align={isSidebar ? 'start' : 'end'}
+        side={isSidebar ? 'top' : 'bottom'}
+        sideOffset={isSidebar ? 8 : 4}
+        forceMount
+      >
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none truncate">

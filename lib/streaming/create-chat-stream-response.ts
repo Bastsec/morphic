@@ -29,6 +29,12 @@ import { streamRelatedQuestions } from './helpers/stream-related-questions'
 import type { StreamContext } from './helpers/types'
 import { BaseStreamConfig } from './types'
 
+type ProviderTokenMetadata = {
+  responseId?: string
+  cachedPromptTokens?: number
+  reasoningTokens?: number
+}
+
 // Constants
 const DEFAULT_CHAT_TITLE = 'Untitled'
 
@@ -111,7 +117,11 @@ export async function createChatStreamResponse(
   // Declare titlePromise in outer scope for onFinish access
   let titlePromise: Promise<string> | undefined
   // Capture provider metadata (e.g., reasoning tokens) to attach on finish
-  let providerOpenAIMetadata: { responseId?: string; cachedPromptTokens?: number; reasoningTokens?: number } | undefined
+  const defaultProviderMetadataKey =
+    model.providerId === 'azure' ? 'azure' : 'openai'
+  let providerTokenMetadata:
+    | { providerKey: string; data: ProviderTokenMetadata }
+    | undefined
 
   // Create the stream
   const stream = createUIMessageStream<UIMessage>({
@@ -191,14 +201,87 @@ export async function createChatStreamResponse(
         )
 
         const responseObj: any = await result.response
+        const [usage, providerMetadataFromStream] = await Promise.all([
+          result.usage.catch(() => undefined),
+          result.providerMetadata.catch(() => undefined)
+        ])
         const responseMessages = responseObj.messages
-        // Extract provider-specific metadata (OpenAI-compatible)
-        const md = responseObj?.providerMetadata?.openai as any
-        if (md && typeof md === 'object') {
-          providerOpenAIMetadata = {
-            responseId: md.responseId,
-            cachedPromptTokens: md.cachedPromptTokens,
-            reasoningTokens: md.reasoningTokens
+
+        const providerMetadata =
+          providerMetadataFromStream ?? responseObj?.providerMetadata
+
+        let providerKey = defaultProviderMetadataKey
+        let providerSpecificMetadata: any
+
+        if (providerMetadata && typeof providerMetadata === 'object') {
+          if (providerMetadata.openai) {
+            providerKey = 'openai'
+            providerSpecificMetadata = providerMetadata.openai
+          } else if (providerMetadata.azure) {
+            providerKey = 'azure'
+            providerSpecificMetadata = providerMetadata.azure
+          } else if (providerMetadata[defaultProviderMetadataKey]) {
+            providerSpecificMetadata =
+              providerMetadata[defaultProviderMetadataKey]
+          } else {
+            const providerKeys = Object.keys(providerMetadata)
+            if (providerKeys.length > 0) {
+              providerKey = providerKeys[0]
+              providerSpecificMetadata = providerMetadata[providerKey]
+            }
+          }
+        }
+
+        let combinedMetadata: ProviderTokenMetadata | undefined =
+          providerTokenMetadata?.providerKey === providerKey
+            ? { ...providerTokenMetadata.data }
+            : undefined
+
+        if (
+          providerSpecificMetadata &&
+          typeof providerSpecificMetadata === 'object'
+        ) {
+          const extracted: ProviderTokenMetadata = {
+            responseId:
+              providerSpecificMetadata.responseId ??
+              providerSpecificMetadata.response_id ??
+              providerSpecificMetadata.id,
+            cachedPromptTokens:
+              providerSpecificMetadata.cachedPromptTokens ??
+              providerSpecificMetadata.cached_prompt_tokens,
+            reasoningTokens:
+              providerSpecificMetadata.reasoningTokens ??
+              providerSpecificMetadata.reasoning_tokens
+          }
+
+          if (
+            Object.values(extracted).some(
+              value => value !== undefined && value !== null
+            )
+          ) {
+            combinedMetadata = {
+              ...(combinedMetadata ?? {}),
+              ...extracted
+            }
+          }
+        }
+
+        if (usage && usage.reasoningTokens !== undefined) {
+          combinedMetadata = {
+            ...(combinedMetadata ?? {}),
+            reasoningTokens: usage.reasoningTokens
+          }
+        }
+
+        if (
+          combinedMetadata &&
+          Object.values(combinedMetadata).some(
+            value => value !== undefined && value !== null
+          )
+        ) {
+          providerTokenMetadata = {
+            providerKey,
+            data: combinedMetadata
           }
         }
         perfTime('researchAgent.stream completed', llmStart)
@@ -237,19 +320,22 @@ export async function createChatStreamResponse(
       if (isAborted || !responseMessage) return
 
       // Attach provider token metadata (thinking/reasoning tokens) to the UI message
-      if (providerOpenAIMetadata) {
+      if (providerTokenMetadata) {
         const existingMetadata: any = (responseMessage.metadata ?? {}) as any
+        const { providerKey, data } = providerTokenMetadata
+        const updatedProviderMetadata = {
+          ...(existingMetadata.provider ?? {}),
+          [providerKey]: {
+            ...(existingMetadata.provider?.[providerKey] ?? {}),
+            ...data
+          }
+        }
+
         responseMessage.metadata = {
           ...existingMetadata,
           thinkingTokens:
-            providerOpenAIMetadata.reasoningTokens ?? existingMetadata?.thinkingTokens,
-          provider: {
-            ...(existingMetadata.provider ?? {}),
-            openai: {
-              ...(existingMetadata.provider?.openai ?? {}),
-              ...providerOpenAIMetadata
-            }
-          }
+            data.reasoningTokens ?? existingMetadata?.thinkingTokens,
+          provider: updatedProviderMetadata
         }
       }
 

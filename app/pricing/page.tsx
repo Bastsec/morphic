@@ -16,21 +16,23 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="w-full flex justify-center p-6">
-      <div className="w-full max-w-3xl">
-        <div className="mb-8">
+    <div className="w-full flex justify-center px-6 py-12">
+      <div className="w-full max-w-4xl mx-auto">
+        <div className="mb-10 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">Pricing</h1>
           <p className="text-muted-foreground mt-2">
-            Simple, transparent pricing. Cancel anytime.
+            Pick the plan that fits your workflow. Upgrade or cancel anytime.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 sm:justify-center sm:justify-items-center">
           {/* Free plan for context */}
-          <Card>
+          <Card className="w-full max-w-sm">
             <CardHeader>
               <CardTitle>Free</CardTitle>
-              <CardDescription>Get started with core features.</CardDescription>
+              <CardDescription>
+                Explore Bastion with essential tools for everyday questions.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="flex items-baseline gap-2 mb-4">
@@ -38,18 +40,18 @@ export default function PricingPage() {
                 <span className="text-muted-foreground">/mo</span>
               </div>
               <ul className="text-sm space-y-2 list-disc pl-5">
-                <li>Answer engine access</li>
-                <li>Standard rate limits</li>
+                <li>Access to GPT-5-mini</li>
+                <li>Access to basic web search</li>
               </ul>
             </CardContent>
           </Card>
 
           {/* Premium plan */}
-          <Card className="border-primary/50">
+          <Card className="w-full max-w-sm border-primary/50">
             <CardHeader>
               <CardTitle>Premium</CardTitle>
               <CardDescription>
-                Unlock All features at A Discounted Price.
+                Unlock deeper research, richer answers, and dedicated support.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -58,9 +60,10 @@ export default function PricingPage() {
                 <span className="text-muted-foreground">/mo</span>
               </div>
               <ul className="text-sm space-y-2 list-disc pl-5 mb-6">
-                <li>Higher rate limits</li>
-                <li>Priority processing</li>
-                <li>Helps fund development</li>
+                <li>500 requests to GPT-5 (high) daily</li>
+                <li>Access to deep research</li>
+                <li>Access to adaptive research and planning</li>
+                <li>Priority support</li>
               </ul>
               <SubscribeButton />
               <p className="text-xs text-muted-foreground mt-2">

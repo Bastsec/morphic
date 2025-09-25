@@ -78,9 +78,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <SidebarProvider defaultOpen>
-            <AppSidebar />
+            <AppSidebar user={user} />
             <div className="flex flex-col flex-1 min-w-0">
-              <Header user={user} />
+              <Header />
               <main className="flex flex-1 min-h-0 min-w-0 overflow-hidden">
                 <ArtifactRoot>{children}</ArtifactRoot>
               </main>

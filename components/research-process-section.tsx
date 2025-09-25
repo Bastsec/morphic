@@ -10,6 +10,7 @@ import type {
   ToolPart,
   UIDataTypes,
   UIMessage,
+  UIMessageMetadata,
   UITools
 } from '@/lib/types/ai'
 import type { DynamicToolPart } from '@/lib/types/dynamic-tools'
@@ -181,7 +182,8 @@ function RenderPart({
   handleAccordionChange,
   status,
   addToolResult,
-  onQuerySelect
+  onQuerySelect,
+  tokenCount
 }: {
   part: MessagePart
   partId: string
@@ -198,6 +200,7 @@ function RenderPart({
   status?: any
   addToolResult?: (params: { toolCallId: string; result: any }) => void
   onQuerySelect: (query: string) => void
+  tokenCount?: number
 }) {
   const hasSubsequent = hasNext || hasSubsequentContent
 
@@ -214,6 +217,7 @@ function RenderPart({
         isSingle={isSingle}
         isFirst={isFirstGroup && partIndex === 0}
         isLast={isLastGroup && partIndex === groupLength - 1}
+        tokenCount={tokenCount}
       />
     )
   }
@@ -310,6 +314,11 @@ export function ResearchProcessSection({
     message.parts as MessagePart[] | undefined
   )
 
+  const thinkingTokens = (
+    (message.metadata as UIMessageMetadata | undefined)?.thinkingTokens
+  )
+  let hasShownThinkingTokens = false
+
   if (segments.length === 0 || segments.every(seg => seg.length === 0))
     return null
 
@@ -329,6 +338,17 @@ export function ResearchProcessSection({
                     ? part.toolCallId
                     : `${messageId}-${part.type}-${sidx}-${gidx}-${pidx}`
 
+                  const tokenCountForPart =
+                    !hasShownThinkingTokens &&
+                    typeof thinkingTokens === 'number' &&
+                    isReasoningPart(part)
+                      ? thinkingTokens
+                      : undefined
+
+                  if (tokenCountForPart !== undefined) {
+                    hasShownThinkingTokens = true
+                  }
+
                   return (
                     <RenderPart
                       key={partId}
@@ -347,6 +367,7 @@ export function ResearchProcessSection({
                       status={status}
                       addToolResult={addToolResult}
                       onQuerySelect={onQuerySelect}
+                      tokenCount={tokenCountForPart}
                     />
                   )
                 })}

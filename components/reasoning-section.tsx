@@ -27,6 +27,7 @@ export interface ReasoningSectionProps {
   isSingle?: boolean // Whether this is a single item or part of a group
   isFirst?: boolean
   isLast?: boolean
+  tokenCount?: number
 }
 
 export function ReasoningSection({
@@ -37,7 +38,8 @@ export function ReasoningSection({
   variant = 'default',
   isSingle = true,
   isFirst = false,
-  isLast = false
+  isLast = false,
+  tokenCount
 }: ReasoningSectionProps) {
   const { open } = useArtifact()
   // Show a short preview when collapsed; switch to a generic label when expanded
@@ -80,6 +82,11 @@ export function ReasoningSection({
         ? 'Thinking...'
         : 'Thoughts'
 
+  const tokenMeta =
+    typeof tokenCount === 'number'
+      ? `Reasoning tokens · ${tokenCount.toLocaleString()}`
+      : undefined
+
   const reasoningHeader = (
     <ProcessHeader
       label={
@@ -101,6 +108,7 @@ export function ReasoningSection({
       }
       isLoading={!content.isDone}
       ariaExpanded={isOpen}
+      meta={tokenMeta}
     />
   )
 
