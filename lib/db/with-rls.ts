@@ -2,9 +2,9 @@ import { sql } from 'drizzle-orm'
 
 import { db } from '.'
 
-// Type for transaction or database instance
+// Types: keep loose to avoid inference issues from lazy any-typed db proxy
 export type DbInstance = typeof db
-export type TxInstance = Parameters<Parameters<typeof db.transaction>[0]>[0]
+export type TxInstance = any
 
 /**
  * Custom error class for RLS violations
@@ -41,7 +41,7 @@ export async function withRLS<T>(
   callback: (tx: TxInstance) => Promise<T>
 ): Promise<T> {
   try {
-    return await db.transaction(async tx => {
+    return await db.transaction(async (tx: TxInstance) => {
       // Set the user ID for this transaction
       // Using SET LOCAL ensures it's only valid for this transaction
       // Use pg_catalog.quote_literal for safe escaping

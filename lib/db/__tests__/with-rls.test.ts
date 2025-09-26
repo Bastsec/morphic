@@ -33,7 +33,7 @@ describe('RLS Helper Functions', () => {
       const mockTx = createMockTx()
 
       // Mock the transaction
-      vi.mocked(db.transaction).mockImplementation(async callback => {
+      vi.mocked(db.transaction).mockImplementation(async (callback: any) => {
         return callback(mockTx)
       })
 
@@ -57,7 +57,7 @@ describe('RLS Helper Functions', () => {
       const userId = "user'; DROP TABLE users; --"
       const mockTx = createMockTx()
 
-      vi.mocked(db.transaction).mockImplementation(async callback => {
+      vi.mocked(db.transaction).mockImplementation(async (callback: any) => {
         return callback(mockTx)
       })
 
@@ -116,7 +116,7 @@ describe('RLS Helper Functions', () => {
         select: mockSelect
       })
 
-      vi.mocked(db.transaction).mockImplementation(async callback => {
+      vi.mocked(db.transaction).mockImplementation(async (callback: any) => {
         return callback(mockTx)
       })
 
@@ -134,7 +134,7 @@ describe('RLS Helper Functions', () => {
       const expectedResult = { id: 'result-1' }
       const mockTx = createMockTx()
 
-      vi.mocked(db.transaction).mockImplementation(async callback => {
+      vi.mocked(db.transaction).mockImplementation(async (callback: any) => {
         return callback(mockTx)
       })
 

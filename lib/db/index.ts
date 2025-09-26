@@ -57,10 +57,8 @@ function initDb() {
     if (typeof window === 'undefined' && process.env.NODE_ENV !== 'production') {
       ;(async () => {
         try {
-          const result = await _db!.execute<{ current_user: string }>(
-            sql`SELECT current_user`
-          )
-          const currentUser = result[0]?.current_user
+          const result = await _db!.execute(sql`SELECT current_user`)
+          const currentUser = (result as Array<{ current_user: string }>)[0]?.current_user
 
           if (isDevelopment) {
             console.log('[DB] ✓ Connection verified as user:', currentUser)

@@ -145,7 +145,7 @@ export async function loadChat(
     })
 
     // Convert to UI format
-    return result.map(msg => buildUIMessageFromDB(msg, msg.parts))
+    return result.map((msg: any) => buildUIMessageFromDB(msg, msg.parts))
   })
 }
 
@@ -185,7 +185,7 @@ export async function loadChatWithMessages(
     }
 
     // Build result
-    const uiMessages = messagesResult.map(msg =>
+    const uiMessages = messagesResult.map((msg: any) =>
       buildUIMessageFromDB(msg, msg.parts)
     )
     return { ...chat, messages: uiMessages }
@@ -223,7 +223,7 @@ export async function deleteMessagesAfter(
         )
       )
 
-    const messageIds = messagesToDelete.map(m => m.id)
+    const messageIds = messagesToDelete.map((m: any) => m.id)
 
     if (messageIds.length > 0) {
       // Delete messages (parts will be cascade deleted)
@@ -251,7 +251,7 @@ export async function deleteMessagesFromIndex(
       .orderBy(asc(messages.createdAt))
 
     // Find the index of the target message
-    const messageIndex = allMessages.findIndex(m => m.id === messageId)
+    const messageIndex = allMessages.findIndex((m: any) => m.id === messageId)
 
     if (messageIndex === -1) {
       return { count: 0 }
@@ -259,7 +259,7 @@ export async function deleteMessagesFromIndex(
 
     // Get messages to delete (from index onwards)
     const messagesToDelete = allMessages.slice(messageIndex)
-    const messageIds = messagesToDelete.map(m => m.id)
+    const messageIds = messagesToDelete.map((m: any) => m.id)
 
     if (messageIds.length > 0) {
       await tx.delete(messages).where(inArray(messages.id, messageIds))
