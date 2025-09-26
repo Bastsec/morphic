@@ -1,11 +1,12 @@
 "use client"
 
 import * as React from "react"
+import { Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
-export default function PaystackCallbackPage() {
+function PaystackCallbackContent() {
   const search = useSearchParams()
   const reference = search.get("reference")
   const [status, setStatus] = React.useState<string | null>(null)
@@ -63,3 +64,26 @@ export default function PaystackCallbackPage() {
   )
 }
 
+export default function PaystackCallbackPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="w-full flex justify-center p-6">
+          <div className="w-full max-w-lg">
+            <Card>
+              <CardHeader>
+                <CardTitle>Payment status</CardTitle>
+                <CardDescription>Loading payment details…</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">Preparing verification…</p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      }
+    >
+      <PaystackCallbackContent />
+    </Suspense>
+  )
+}
