@@ -25,3 +25,6 @@ export async function GET() {
   }
 }
 
+// Ensure this route runs on Node.js runtime and is always dynamic
+export const runtime = 'nodejs'
+export const dynamic = 'force-dynamic'
