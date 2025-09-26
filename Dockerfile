@@ -9,6 +9,11 @@ RUN bun install
 
 # Copy source code and build
 COPY . .
+# Pass build-time secrets for Next build that validates DB env
+ARG DATABASE_URL
+ARG DATABASE_RESTRICTED_URL
+ENV DATABASE_URL=$DATABASE_URL
+ENV DATABASE_RESTRICTED_URL=$DATABASE_RESTRICTED_URL
 RUN bun next telemetry disable
 RUN bun run build
 

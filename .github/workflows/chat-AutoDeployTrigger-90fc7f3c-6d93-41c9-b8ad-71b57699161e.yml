@@ -35,15 +35,15 @@ jobs:
         uses: azure/container-apps-deploy-action@v2
         with:
           appSourcePath: ${{ github.workspace }}
-          _dockerfilePathKey_: _dockerfilePath_
-          _targetLabelKey_: _targetLabel_
+          dockerfilePath: Dockerfile
           registryUrl: wapiacr.azurecr.io
           registryUsername: ${{ secrets.CHAT_REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.CHAT_REGISTRY_PASSWORD }}
           containerAppName: chat
           resourceGroup: wapiflow
           imageToBuild: wapiacr.azurecr.io/chat:${{ github.sha }}
-          _buildArgumentsKey_: |
-            _buildArgumentsValues_
+          buildArguments: |
+            DATABASE_URL=${{ secrets.DATABASE_URL }}
+            DATABASE_RESTRICTED_URL=${{ secrets.DATABASE_RESTRICTED_URL }}
 
 
