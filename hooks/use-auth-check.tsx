@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { User } from '@supabase/supabase-js'
 
 export function useAuthCheck() {
@@ -9,6 +10,12 @@ export function useAuthCheck() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // If Supabase isn't configured for the browser bundle, skip without error.
+    if (!isSupabaseBrowserConfigured()) {
+      setLoading(false)
+      setUser(null)
+      return
+    }
     // Create a single Supabase client instance for this effect
     const supabase = createClient()
 

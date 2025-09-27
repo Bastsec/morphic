@@ -1,4 +1,5 @@
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { useEffect, useState } from 'react'
 
 export const useCurrentUserImage = () => {
@@ -6,6 +7,10 @@ export const useCurrentUserImage = () => {
 
   useEffect(() => {
     const fetchUserImage = async () => {
+      if (!isSupabaseBrowserConfigured()) {
+        setImage(null)
+        return
+      }
       const { data, error } = await createClient().auth.getSession()
       if (error) {
         console.error(error)

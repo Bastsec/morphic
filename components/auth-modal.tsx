@@ -3,6 +3,7 @@
 import { useState } from 'react'
 
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -24,6 +25,10 @@ export function AuthModal({ open, onOpenChange }: AuthModalProps) {
   const [error, setError] = useState<string | null>(null)
 
   const handleGoogleAuth = async () => {
+    if (!isSupabaseBrowserConfigured()) {
+      setError('Sign-in is not configured. Please contact support.')
+      return
+    }
     const supabase = createClient()
     setIsLoading(true)
     setError(null)

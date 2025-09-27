@@ -5,6 +5,7 @@ import { useState } from 'react'
 import { Link2, Palette, Settings2 } from 'lucide-react'
 
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { cn } from '@/lib/utils'
 
 import { Button } from '@/components/ui/button'
@@ -33,6 +34,10 @@ export default function GuestMenu({ placement = 'header' }: GuestMenuProps) {
 
   const handleGoogleSignIn = async () => {
     if (isSigningIn) return
+    if (!isSupabaseBrowserConfigured()) {
+      setError('Sign-in is not configured. Please contact support.')
+      return
+    }
     const supabase = createClient()
     setIsSigningIn(true)
     setError(null)

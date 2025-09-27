@@ -3,6 +3,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { cn } from '@/lib/utils/index'
 
 import { Button } from '@/components/ui/button'
@@ -23,6 +24,10 @@ export function SignUpForm({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleSignUp = async () => {
+    if (!isSupabaseBrowserConfigured()) {
+      setError('Sign-up is not configured. Please contact support.')
+      return
+    }
     const supabase = createClient()
     setIsLoading(true)
     setError(null)

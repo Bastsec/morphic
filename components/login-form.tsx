@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { cn } from '@/lib/utils/index'
 
 import { Button } from '@/components/ui/button'
@@ -24,6 +25,10 @@ export function LoginForm({
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleLogin = async () => {
+    if (!isSupabaseBrowserConfigured()) {
+      setError('Sign-in is not configured. Please contact support.')
+      return
+    }
     const supabase = createClient()
     setIsLoading(true)
     setError(null)

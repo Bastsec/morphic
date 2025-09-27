@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 
 import { createClient } from '@/lib/supabase/client'
+import { isSupabaseBrowserConfigured } from '@/lib/supabase/config'
 import { cn } from '@/lib/utils/index'
 
 import { Button } from '@/components/ui/button'
@@ -28,6 +29,10 @@ export function ForgotPasswordForm({
 
   const handleForgotPassword = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!isSupabaseBrowserConfigured()) {
+      setError('Password reset is not available. Please contact support.')
+      return
+    }
     const supabase = createClient()
     setIsLoading(true)
     setError(null)
