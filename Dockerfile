@@ -14,6 +14,20 @@ ARG DATABASE_URL
 ARG DATABASE_RESTRICTED_URL
 ENV DATABASE_URL=$DATABASE_URL
 ENV DATABASE_RESTRICTED_URL=$DATABASE_RESTRICTED_URL
+
+# Ensure Supabase client config is available at build time for the browser bundle
+# These are safe to expose in the client bundle (anon key + project URL)
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Optional: also expose server-side names so server code can read either form
+# (server code in this repo falls back from SUPABASE_* to NEXT_PUBLIC_* if needed)
+ARG SUPABASE_URL
+ARG SUPABASE_ANON_KEY
+ENV SUPABASE_URL=$SUPABASE_URL
+ENV SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
 RUN bun next telemetry disable
 RUN bun run build
 
