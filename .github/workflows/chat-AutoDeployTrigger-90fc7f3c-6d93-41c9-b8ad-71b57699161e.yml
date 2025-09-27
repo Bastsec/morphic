@@ -49,6 +49,7 @@ jobs:
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
+            MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }}
           environmentVariables: >-
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
@@ -56,5 +57,11 @@ jobs:
             SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
             DATABASE_URL=${{ secrets.DATABASE_URL }}
             DATABASE_RESTRICTED_URL=${{ secrets.DATABASE_RESTRICTED_URL }}
+            MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }}
+            AZURE_API_KEY=${{ secrets.AZURE_API_KEY }}
+            AZURE_BASE_URL=${{ secrets.AZURE_BASE_URL }}
+            AZURE_API_VERSION=${{ secrets.AZURE_API_VERSION }}
+          replaceEnvironmentVariables: false
+          replaceSecrets: false
 
 
