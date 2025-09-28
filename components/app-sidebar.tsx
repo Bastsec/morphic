@@ -2,7 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 
 import type { User } from '@supabase/supabase-js'
-import { Crown, Plus } from 'lucide-react'
+import { Crown } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
 
@@ -18,6 +18,7 @@ import {
   SidebarTrigger
 } from '@/components/ui/sidebar'
 
+import NewChatButton from '@/components/new-chat-button'
 import { ChatHistorySection } from './sidebar/chat-history-section'
 import { ChatHistorySkeleton } from './sidebar/chat-history-skeleton'
 import { IconLogo } from './ui/icons'
@@ -42,10 +43,7 @@ export default function AppSidebar({ user }: AppSidebarProps) {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton asChild>
-              <Link href="/" className="flex items-center gap-2">
-                <Plus className="size-4" />
-                <span>New</span>
-              </Link>
+              <NewChatButton />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

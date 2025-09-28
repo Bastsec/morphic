@@ -4,19 +4,18 @@ name: Trigger auto deployment for chat
 on:
   # Automatically trigger it when detected changes in repo
   push:
-    branches: 
-      [ main ]
+    branches: [main]
     paths:
-    - '**'
-    - '.github/workflows/chat-AutoDeployTrigger-90fc7f3c-6d93-41c9-b8ad-71b57699161e.yml'
+      - '**'
+      - '.github/workflows/chat-AutoDeployTrigger-90fc7f3c-6d93-41c9-b8ad-71b57699161e.yml'
 
-  # Allow manual trigger 
-  workflow_dispatch:      
+  # Allow manual trigger
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    permissions: 
+    permissions:
       id-token: write #This is required for requesting the OIDC JWT Token
       contents: read #Required when GH token is used to authenticate with private repo
 
@@ -60,8 +59,5 @@ jobs:
             MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }}
             AZURE_API_KEY=${{ secrets.AZURE_API_KEY }}
             AZURE_BASE_URL=${{ secrets.AZURE_BASE_URL }}
-            AZURE_API_VERSION=${{ secrets.AZURE_API_VERSION }}
           replaceEnvironmentVariables: false
           replaceSecrets: false
-
-

@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import { generateId } from '@/lib/db/schema'
 
 import { ChangelogBanner } from '@/components/changelog-banner'
@@ -8,7 +10,7 @@ export default async function Page() {
   const id = generateId()
   return (
     <>
-      <Chat id={id} />
+      <Chat key={id} id={id} />
       <ChangelogBanner />
       <PremiumBanner />
     </>
