@@ -139,6 +139,8 @@ export function RenderMessage({
           key={`${messageId}-assistant-file-${index}`}
           url={part.url}
           alt={part.filename || 'Generated image'}
+          mediaType={part.mediaType}
+          filename={part.filename}
         />
       )
     } else if (
