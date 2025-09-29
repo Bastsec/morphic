@@ -4,13 +4,15 @@ import {
   createUIMessageStream,
   createUIMessageStreamResponse,
   UIMessage,
-  UIMessageStreamWriter
+  UIMessageStreamWriter,
+  generateImage
 } from 'ai'
 import { randomUUID } from 'crypto'
 import { Langfuse } from 'langfuse'
 
 import { researcher } from '@/lib/agents/researcher'
 import { isTracingEnabled } from '@/lib/utils/telemetry'
+import { getImageModel } from '@/lib/utils/registry'
 
 import { loadChat } from '../actions/chat'
 import { generateChatTitle } from '../agents/title-generator'
@@ -134,6 +136,72 @@ export async function createChatStreamResponse(
         )
         const messagesToModel = await prepareMessages(context, message)
         perfTime('prepareMessages completed (stream)', prepareStart)
+
+        // If the selected model is an image generation model, handle directly
+        const isImageMode = model.id === 'gpt-image-1'
+        if (isImageMode) {
+          try {
+            // Determine the prompt using the last user message
+            const lastUser = [...messagesToModel]
+              .reverse()
+              .find(m => m.role === 'user')
+            const prompt = lastUser ? getTextFromParts(lastUser.parts) : ''
+
+            if (!prompt || prompt.trim().length === 0) {
+              writer.write({
+                type: 'text',
+                text: 'Please provide a prompt to generate an image.'
+              })
+              return
+            }
+
+            // Start title generation in parallel for new chats
+            if (!initialChat && message) {
+              const userContent = getTextFromParts(message.parts)
+              titlePromise = generateChatTitle({
+                userMessageContent: userContent,
+                modelId: context.modelId,
+                abortSignal,
+                parentTraceId
+              }).catch(error => {
+                console.error('Error generating title:', error)
+                return DEFAULT_CHAT_TITLE
+              })
+            }
+
+            const imgStart = performance.now()
+            perfLog(
+              `generateImage - Start: model=${context.modelId}, size=1024x1024`
+            )
+            const result = await generateImage({
+              model: getImageModel(context.modelId),
+              prompt,
+              size: '1024x1024',
+              // quality: 'standard', // optional
+              abortSignal
+            })
+
+            const dataUrl = await result.toDataURL()
+
+            // Stream the assistant image as a file part so it persists and renders in chat
+            writer.write({
+              type: 'file',
+              mediaType: 'image/png',
+              filename: 'image.png',
+              url: dataUrl
+            })
+
+            perfTime('generateImage completed', imgStart)
+            return
+          } catch (err) {
+            console.error('Image generation error:', err)
+            writer.write({
+              type: 'text',
+              text: 'Failed to generate image. Please try again.'
+            })
+            return
+          }
+        }
 
         // Get the researcher agent with parent trace ID and search mode
         const researchAgent = researcher({
@@ -285,8 +353,8 @@ export async function createChatStreamResponse(
           }
         }
         perfTime('researchAgent.stream completed', llmStart)
-        // Generate related questions
-        if (responseMessages && responseMessages.length > 0) {
+        // Generate related questions (skip for image mode)
+        if (!isImageMode && responseMessages && responseMessages.length > 0) {
           // Find the last user message
           const lastUserMessage = [...modelMessages]
             .reverse()

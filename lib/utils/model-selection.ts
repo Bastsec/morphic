@@ -36,7 +36,10 @@ export function selectModel({ cookieStore }: ModelSelectionParams): Model {
 
   try {
     // If model type is set in cookie, use it
-    if (modelTypeCookie && ['speed', 'quality'].includes(modelTypeCookie)) {
+    if (
+      modelTypeCookie &&
+      ['speed', 'quality', 'image'].includes(modelTypeCookie)
+    ) {
       const model = getModelForType(modelTypeCookie)
       if (model) return model
     }

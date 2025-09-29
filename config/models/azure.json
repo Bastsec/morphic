@@ -19,6 +19,12 @@
             "reasoningSummary": "auto"
           }
         }
+      },
+      "image": {
+        "id": "gpt-image-1",
+        "name": "GPT Image",
+        "provider": "Azure",
+        "providerId": "azure"
       }
     },
     "relatedQuestions": {

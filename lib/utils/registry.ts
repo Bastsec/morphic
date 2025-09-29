@@ -3,7 +3,7 @@ import { createAzure } from '@ai-sdk/azure'
 import { createGateway } from '@ai-sdk/gateway'
 import { google } from '@ai-sdk/google'
 import { createOpenAI, openai } from '@ai-sdk/openai'
-import { createProviderRegistry, LanguageModel } from 'ai'
+import { createProviderRegistry, LanguageModel, ImageModel } from 'ai'
 
 // Azure configuration normalization
 const azureResourceEnv = process.env.AZURE_RESOURCE_NAME?.trim()
@@ -67,6 +67,12 @@ export const registry = createProviderRegistry({
 export function getModel(model: string): LanguageModel {
   return registry.languageModel(
     model as Parameters<typeof registry.languageModel>[0]
+  )
+}
+
+export function getImageModel(model: string): ImageModel {
+  return registry.imageModel(
+    model as Parameters<typeof registry.imageModel>[0]
   )
 }
 

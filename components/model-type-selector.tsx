@@ -17,7 +17,8 @@ import {
 
 const MODEL_TYPE_OPTIONS: { value: ModelType; label: string }[] = [
   { value: 'speed', label: 'Speed' },
-  { value: 'quality', label: 'Quality' }
+  { value: 'quality', label: 'Quality' },
+  { value: 'image', label: 'Image' }
 ]
 
 export function ModelTypeSelector() {
@@ -26,7 +27,7 @@ export function ModelTypeSelector() {
 
   useEffect(() => {
     const savedType = getCookie('modelType')
-    if (savedType && ['speed', 'quality'].includes(savedType)) {
+    if (savedType && ['speed', 'quality', 'image'].includes(savedType)) {
       setValue(savedType as ModelType)
     }
   }, [])

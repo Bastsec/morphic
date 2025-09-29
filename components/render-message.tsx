@@ -14,6 +14,7 @@ import { DynamicToolDisplay } from './dynamic-tool-display'
 import ResearchProcessSection from './research-process-section'
 import { UserFileSection } from './user-file-section'
 import { UserTextSection } from './user-text-section'
+import { AssistantImageSection } from './assistant-image-section'
 
 interface RenderMessageProps {
   message: UIMessage
@@ -128,6 +129,16 @@ export function RenderMessage({
           reload={reload}
           status={status}
           citationMaps={citationMaps}
+        />
+      )
+    } else if (part.type === 'file') {
+      // Flush accumulated non-text first
+      flushBuffer(`seg-${index}`)
+      elements.push(
+        <AssistantImageSection
+          key={`${messageId}-assistant-file-${index}`}
+          url={part.url}
+          alt={part.filename || 'Generated image'}
         />
       )
     } else if (
