@@ -9,12 +9,12 @@ import type {
 import type { DynamicToolPart } from '@/lib/types/dynamic-tools'
 import { extractCitationMaps } from '@/lib/utils/citation'
 
+import { AssistantImageSection } from './assistant-image-section'
 import { AnswerSection } from './answer-section'
 import { DynamicToolDisplay } from './dynamic-tool-display'
 import ResearchProcessSection from './research-process-section'
 import { UserFileSection } from './user-file-section'
 import { UserTextSection } from './user-text-section'
-import { AssistantImageSection } from './assistant-image-section'
 
 interface RenderMessageProps {
   message: UIMessage

@@ -4,8 +4,7 @@ import Link from 'next/link'
 import type { User } from '@supabase/supabase-js'
 import { Crown } from 'lucide-react'
 
-import { cn } from '@/lib/utils'
-
+import NewChatButton from '@/components/new-chat-button'
 import {
   Sidebar,
   SidebarContent,
@@ -17,12 +16,12 @@ import {
   SidebarRail,
   SidebarTrigger
 } from '@/components/ui/sidebar'
+import { cn } from '@/lib/utils'
 
-import NewChatButton from '@/components/new-chat-button'
+import GuestMenu from './guest-menu'
 import { ChatHistorySection } from './sidebar/chat-history-section'
 import { ChatHistorySkeleton } from './sidebar/chat-history-skeleton'
 import { IconLogo } from './ui/icons'
-import GuestMenu from './guest-menu'
 import UserMenu from './user-menu'
 
 interface AppSidebarProps {

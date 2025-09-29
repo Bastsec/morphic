@@ -1,7 +1,7 @@
 'use client'
 
-import { Plus } from 'lucide-react'
 import { usePathname, useRouter } from 'next/navigation'
+import { Plus } from 'lucide-react'
 
 export default function NewChatButton() {
   const router = useRouter()
@@ -29,4 +29,3 @@ export default function NewChatButton() {
     </button>
   )
 }
-

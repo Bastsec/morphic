@@ -5,14 +5,14 @@ import {
   createUIMessageStreamResponse,
   UIMessage,
   UIMessageStreamWriter,
-  generateImage
+  experimental_generateImage as generateImage
 } from 'ai'
 import { randomUUID } from 'crypto'
 import { Langfuse } from 'langfuse'
 
 import { researcher } from '@/lib/agents/researcher'
-import { isTracingEnabled } from '@/lib/utils/telemetry'
 import { getImageModel } from '@/lib/utils/registry'
+import { isTracingEnabled } from '@/lib/utils/telemetry'
 
 import { loadChat } from '../actions/chat'
 import { generateChatTitle } from '../agents/title-generator'
