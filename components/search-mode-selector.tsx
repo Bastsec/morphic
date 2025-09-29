@@ -17,6 +17,7 @@ import {
   DropdownMenuTrigger
 } from './ui/dropdown-menu'
 import { HoverCard, HoverCardContent, HoverCardTrigger } from './ui/hover-card'
+import Link from 'next/link'
 
 export function SearchModeSelector() {
   const [value, setValue] = useState<SearchMode>('quick')
@@ -25,12 +26,18 @@ export function SearchModeSelector() {
   const [justSelected, setJustSelected] = useState(false)
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const buttonsRef = useRef<(HTMLButtonElement | null)[]>([])
+  const [isPremium, setIsPremium] = useState(false)
 
   useEffect(() => {
     const savedMode = getCookie('searchMode')
     if (savedMode && ['quick', 'planning', 'adaptive'].includes(savedMode)) {
       setValue(savedMode as SearchMode)
     }
+    // Load billing status to gate premium modes
+    fetch('/api/billing/status')
+      .then(res => res.json())
+      .then(data => setIsPremium(!!data?.premium))
+      .catch(() => setIsPremium(false))
   }, [])
 
   useEffect(() => {
@@ -50,6 +57,12 @@ export function SearchModeSelector() {
   }, [value])
 
   const handleModeSelect = (mode: SearchMode) => {
+    // Gate premium-only modes (adaptive, planning)
+    if (!isPremium && (mode === 'adaptive' || mode === 'planning')) {
+      setOpenHoverCard(null)
+      setDropdownOpen(false)
+      return
+    }
     setValue(mode)
     setCookie('searchMode', mode)
     setOpenHoverCard(null) // Close hover card on selection
@@ -98,10 +111,12 @@ export function SearchModeSelector() {
             {SEARCH_MODE_CONFIGS.map(config => {
               const ModeIcon = config.icon
               const isSelected = value === config.value
+              const gated = !isPremium && (config.value === 'adaptive' || config.value === 'planning')
               return (
                 <DropdownMenuItem
                   key={config.value}
                   onClick={() => handleModeSelect(config.value)}
+                  disabled={gated}
                   className="relative flex flex-col items-start gap-1 py-2 pl-8 pr-2 cursor-pointer focus:outline-none"
                 >
                   {isSelected && (
@@ -111,7 +126,17 @@ export function SearchModeSelector() {
                     <ModeIcon
                       className={cn('h-4 w-4 transition-colors', config.color)}
                     />
-                    <span className="text-sm font-medium">{config.label}</span>
+                    <span className="text-sm font-medium flex items-center gap-1">
+                      {config.label}
+                      {!isPremium && (config.value === 'adaptive' || config.value === 'planning') ? (
+                        <Link
+                          href="/pricing"
+                          className="ml-1 text-[10px] uppercase tracking-wide text-muted-foreground hover:underline"
+                        >
+                          Upgrade
+                        </Link>
+                      ) : null}
+                    </span>
                   </div>
                   <div className="flex flex-col gap-0.5 ml-6">
                     <span className="text-xs text-muted-foreground">
@@ -139,6 +164,7 @@ export function SearchModeSelector() {
             {SEARCH_MODE_CONFIGS.map((config, index) => {
               const Icon = config.icon
               const isSelected = value === config.value
+              const gated = !isPremium && (config.value === 'adaptive' || config.value === 'planning')
 
               return (
                 <HoverCard
@@ -163,10 +189,12 @@ export function SearchModeSelector() {
                         'relative z-10 flex items-center justify-center rounded-full px-3 py-2 transition-colors duration-200',
                         isSelected
                           ? 'text-foreground'
-                          : 'text-muted-foreground hover:text-foreground/80'
+                          : 'text-muted-foreground hover:text-foreground/80',
+                        gated && 'opacity-60'
                       )}
                       aria-label={`${config.label} mode`}
                       aria-pressed={isSelected}
+                      disabled={gated}
                     >
                       <Icon
                         className={cn(

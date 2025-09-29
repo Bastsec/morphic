@@ -1,13 +1,17 @@
 import { revalidateTag } from 'next/cache'
 import { cookies } from 'next/headers'
+import { eq } from 'drizzle-orm'
 
 import { getCurrentUserId } from '@/lib/auth/get-current-user'
 import { createChatStreamResponse } from '@/lib/streaming/create-chat-stream-response'
 import { SearchMode } from '@/lib/types/search'
+import { getModelForType } from '@/lib/config/model-types'
 import { selectModel } from '@/lib/utils/model-selection'
 import { perfLog, perfTime } from '@/lib/utils/perf-logging'
 import { resetAllCounters } from '@/lib/utils/perf-tracking'
 import { isProviderEnabled } from '@/lib/utils/registry'
+import { db } from '@/lib/db'
+import { userBilling } from '@/lib/db/schema'
 
 export const maxDuration = 300
 
@@ -69,18 +73,31 @@ export async function POST(req: Request) {
 
     const cookieStore = await cookies()
 
+    // Determine user billing status (premium/free)
+    const billingRow = await db.query.userBilling.findFirst({
+      where: eq(userBilling.userId, userId)
+    })
+    const isPremium = billingRow?.status === 'premium'
+
     // Select the appropriate model based on model type preference
-    const selectedModel = selectModel({
+    let selectedModel = selectModel({
       cookieStore
     })
+    // Price gating: restrict quality and image modes for free users
+    if (!isPremium && (selectedModel.id === 'gpt-5' || selectedModel.id === 'gpt-image-1')) {
+      selectedModel = getModelForType('speed')
+    }
 
-    // Get search mode from cookie
+    // Get search mode from cookie, gated for free users
     const searchModeCookie = cookieStore.get('searchMode')?.value
-    const searchMode: SearchMode =
+    let searchMode: SearchMode =
       searchModeCookie &&
       ['quick', 'planning', 'adaptive'].includes(searchModeCookie)
         ? (searchModeCookie as SearchMode)
         : 'quick'
+    if (!isPremium && (searchMode === 'planning' || searchMode === 'adaptive')) {
+      searchMode = 'quick'
+    }
 
     if (!isProviderEnabled(selectedModel.providerId)) {
       return new Response(

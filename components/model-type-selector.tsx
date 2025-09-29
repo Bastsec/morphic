@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from 'react'
 
-import { Check, ChevronDown } from 'lucide-react'
+import { Check, ChevronDown, Lock } from 'lucide-react'
+import Link from 'next/link'
 
 import { ModelType } from '@/lib/types/model-type'
 import { getCookie, setCookie } from '@/lib/utils/cookies'
@@ -24,15 +25,26 @@ const MODEL_TYPE_OPTIONS: { value: ModelType; label: string }[] = [
 export function ModelTypeSelector() {
   const [value, setValue] = useState<ModelType>('speed')
   const [dropdownOpen, setDropdownOpen] = useState(false)
+  const [isPremium, setIsPremium] = useState(false)
 
   useEffect(() => {
     const savedType = getCookie('modelType')
     if (savedType && ['speed', 'quality', 'image'].includes(savedType)) {
       setValue(savedType as ModelType)
     }
+    // Load billing status to gate premium modes
+    fetch('/api/billing/status')
+      .then(res => res.json())
+      .then(data => setIsPremium(!!data?.premium))
+      .catch(() => setIsPremium(false))
   }, [])
 
   const handleTypeSelect = (type: ModelType) => {
+    // Gate premium-only modes (quality, image)
+    if (!isPremium && (type === 'quality' || type === 'image')) {
+      setDropdownOpen(false)
+      return
+    }
     setValue(type)
     setCookie('modelType', type)
     setDropdownOpen(false)
@@ -62,16 +74,31 @@ export function ModelTypeSelector() {
       >
         {MODEL_TYPE_OPTIONS.map(option => {
           const isSelected = value === option.value
+          const gated = !isPremium && (option.value === 'quality' || option.value === 'image')
           return (
             <DropdownMenuItem
               key={option.value}
               onClick={() => handleTypeSelect(option.value)}
               className="relative flex items-center cursor-pointer"
+              disabled={gated}
             >
               <div className="w-4 h-4 mr-2 flex items-center justify-center">
                 {isSelected && <Check className="h-3 w-3" />}
               </div>
-              <span className="text-sm">{option.label}</span>
+              <span className="text-sm flex items-center gap-1">
+                {option.label}
+                {gated && (
+                  <>
+                    <Lock className="h-3 w-3 opacity-60" />
+                    <Link
+                      href="/pricing"
+                      className="ml-1 text-[10px] uppercase tracking-wide text-muted-foreground hover:underline"
+                    >
+                      Upgrade
+                    </Link>
+                  </>
+                )}
+              </span>
             </DropdownMenuItem>
           )
         })}
