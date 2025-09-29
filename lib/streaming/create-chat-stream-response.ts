@@ -148,10 +148,14 @@ export async function createChatStreamResponse(
             const prompt = lastUser ? getTextFromParts(lastUser.parts) : ''
 
             if (!prompt || prompt.trim().length === 0) {
+              const chunkId = randomUUID()
+              writer.write({ type: 'text-start', id: chunkId })
               writer.write({
-                type: 'text',
-                text: 'Please provide a prompt to generate an image.'
+                type: 'text-delta',
+                delta: 'Please provide a prompt to generate an image.',
+                id: chunkId
               })
+              writer.write({ type: 'text-end', id: chunkId })
               return
             }
 
@@ -181,24 +185,23 @@ export async function createChatStreamResponse(
               abortSignal
             })
 
-            const dataUrl = await result.toDataURL()
+            const dataUrl = `data:${result.image.mediaType};base64,${result.image.base64}`
 
             // Stream the assistant image as a file part so it persists and renders in chat
-            writer.write({
-              type: 'file',
-              mediaType: 'image/png',
-              filename: 'image.png',
-              url: dataUrl
-            })
+            writer.write({ type: 'file', mediaType: result.image.mediaType, url: dataUrl })
 
             perfTime('generateImage completed', imgStart)
             return
           } catch (err) {
             console.error('Image generation error:', err)
+            const chunkId = randomUUID()
+            writer.write({ type: 'text-start', id: chunkId })
             writer.write({
-              type: 'text',
-              text: 'Failed to generate image. Please try again.'
+              type: 'text-delta',
+              delta: 'Failed to generate image. Please try again.',
+              id: chunkId
             })
+            writer.write({ type: 'text-end', id: chunkId })
             return
           }
         }
