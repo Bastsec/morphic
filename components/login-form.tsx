@@ -16,6 +16,7 @@ import {
   CardTitle
 } from '@/components/ui/card'
 import { IconGoogle, IconLogo } from '@/components/ui/icons'
+import PremiumUpgradeInline from './premium-upgrade-inline'
 
 export function LoginForm({
   className,
@@ -81,6 +82,7 @@ export function LoginForm({
           </div>
         </CardContent>
       </Card>
+      <PremiumUpgradeInline />
       <div className="text-center text-xs text-muted-foreground">
         <Link href="/" className="hover:underline">
           &larr; Back to Home

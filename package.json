@@ -70,6 +70,7 @@
     "katex": "^0.16.10",
     "langfuse-vercel": "^3.38.4",
     "lucide-react": "^0.507.0",
+    "motion": "^12.23.22",
     "next": "^15.2.3",
     "next-themes": "^0.3.0",
     "node-html-parser": "^6.1.13",

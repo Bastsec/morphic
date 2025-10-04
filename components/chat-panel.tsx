@@ -21,6 +21,7 @@ import { ModelTypeSelector } from './model-type-selector'
 import { SearchModeSelector } from './search-mode-selector'
 import { UploadedFileList } from './uploaded-file-list'
 import PremiumUpgradeInline from './premium-upgrade-inline'
+import ModelHypertextBanner from './model-hypertext-banner'
 
 // Constants for timing delays
 const INPUT_UPDATE_DELAY_MS = 10 // Delay to ensure input value is updated before form submission
@@ -173,6 +174,10 @@ export function ChatPanel({
           <IconLogo className="size-12 text-muted-foreground" />
         </div>
       )}
+      {/* Subtle model banner at the top */}
+      <div className="max-w-3xl w-full mx-auto mb-2 text-center">
+        <ModelHypertextBanner />
+      </div>
       {uploadedFiles.length > 0 && (
         <UploadedFileList files={uploadedFiles} onRemove={handleFileRemove} />
       )}

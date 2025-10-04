@@ -31,7 +31,8 @@ export default function PremiumUpgradeInline() {
     check()
   }, [])
 
-  if (!ready || !isAuthenticated || isPremium) return null
+  // Show for both unauthenticated and authenticated non-premium users
+  if (!ready || isPremium) return null
 
   return (
     <div className="z-10 flex items-center justify-center">
@@ -47,4 +48,3 @@ export default function PremiumUpgradeInline() {
     </div>
   )
 }
-

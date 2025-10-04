@@ -88,6 +88,10 @@ export function ModelTypeSelector() {
 
     setValue(type)
     setCookie('modelType', type)
+    // Notify listeners (e.g., banners) of model type change
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('model-type-changed', { detail: type }))
+    }
     setOpen(false)
   }
 
