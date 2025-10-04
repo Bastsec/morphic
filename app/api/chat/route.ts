@@ -11,7 +11,8 @@ import { perfLog, perfTime } from '@/lib/utils/perf-logging'
 import { resetAllCounters } from '@/lib/utils/perf-tracking'
 import { isProviderEnabled } from '@/lib/utils/registry'
 import { db } from '@/lib/db'
-import { userBilling } from '@/lib/db/schema'
+import { userBilling, type UserBilling } from '@/lib/db/schema'
+import { withRLS } from '@/lib/db/with-rls'
 
 export const maxDuration = 300
 
@@ -74,9 +75,9 @@ export async function POST(req: Request) {
     const cookieStore = await cookies()
 
     // Determine user billing status (premium/free)
-    const billingRow = await db.query.userBilling.findFirst({
-      where: eq(userBilling.userId, userId)
-    })
+    const billingRow = await withRLS<UserBilling | undefined>(userId, tx =>
+      tx.query.userBilling.findFirst({ where: eq(userBilling.userId, userId) })
+    )
     const isPremium = billingRow?.status === 'premium'
 
     // Select the appropriate model based on model type preference

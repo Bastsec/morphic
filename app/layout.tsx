@@ -7,13 +7,13 @@ import { isSupabaseConfigured } from '@/lib/supabase/config'
 import { createClient } from '@/lib/supabase/server'
 import { cn } from '@/lib/utils'
 
-import { SidebarProvider } from '@/components/ui/sidebar'
-import { Toaster } from '@/components/ui/sonner'
-
 import AppSidebar from '@/components/app-sidebar'
 import ArtifactRoot from '@/components/artifact/artifact-root'
 import Header from '@/components/header'
+import { OnboardingDialog } from '@/components/onboarding-dialog'
 import { ThemeProvider } from '@/components/theme-provider'
+import { SidebarProvider } from '@/components/ui/sidebar'
+import { Toaster } from '@/components/ui/sonner'
 
 import './globals.css'
 
@@ -86,6 +86,11 @@ export default async function RootLayout({
               </main>
             </div>
           </SidebarProvider>
+          {user && (
+            <OnboardingDialog
+              initialHasOnboarded={Boolean(user.user_metadata?.has_onboarded)}
+            />
+          )}
           <Toaster />
           <Analytics />
         </ThemeProvider>

@@ -11,15 +11,16 @@ import { toast } from 'sonner'
 import { UploadedFile } from '@/lib/types'
 import type { UIDataTypes, UIMessage, UITools } from '@/lib/types/ai'
 import { cn } from '@/lib/utils'
+import { normalizeUserText } from '@/lib/utils/text'
 
 import { useArtifact } from './artifact/artifact-context'
 import { Button } from './ui/button'
 import { IconLogo } from './ui/icons'
-import { ActionButtons } from './action-buttons'
 import { FileUploadButton } from './file-upload-button'
 import { ModelTypeSelector } from './model-type-selector'
 import { SearchModeSelector } from './search-mode-selector'
 import { UploadedFileList } from './uploaded-file-list'
+import PremiumUpgradeInline from './premium-upgrade-inline'
 
 // Constants for timing delays
 const INPUT_UPDATE_DELAY_MS = 10 // Delay to ensure input value is updated before form submission
@@ -123,6 +124,32 @@ export function ChatPanel({
     },
     [setUploadedFiles]
   )
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
+      event.preventDefault()
+      const target = event.currentTarget
+      const pasted = normalizeUserText(
+        event.clipboardData.getData('text/plain') || ''
+      )
+
+      const selectionStart = target.selectionStart ?? target.value.length
+      const selectionEnd = target.selectionEnd ?? selectionStart
+      const nextValue =
+        target.value.slice(0, selectionStart) +
+        pasted +
+        target.value.slice(selectionEnd)
+
+      handleInputChange({
+        target: { value: nextValue }
+      } as React.ChangeEvent<HTMLTextAreaElement>)
+
+      requestAnimationFrame(() => {
+        const cursor = selectionStart + pasted.length
+        target.setSelectionRange(cursor, cursor)
+      })
+    },
+    [handleInputChange]
+  )
   // Scroll to the bottom of the container
   const handleScrollToBottom = () => {
     const scrollContainer = scrollContainerRef.current
@@ -195,6 +222,7 @@ export function ChatPanel({
             disabled={isLoading || isToolInvocationInProgress()}
             className="resize-none w-full min-h-12 bg-transparent border-0 p-4 text-sm placeholder:text-muted-foreground focus-visible:outline-hidden disabled:cursor-not-allowed disabled:opacity-50"
             onChange={handleInputChange}
+            onPaste={handlePaste}
             onKeyDown={e => {
               if (
                 e.key === 'Enter' &&
@@ -296,34 +324,10 @@ export function ChatPanel({
           </div>
         </div>
 
-        {/* Action buttons for prompt suggestions */}
-        {messages.length === 0 && (
-          <ActionButtons
-            onSelectPrompt={message => {
-              // Set the input value and submit
-              handleInputChange({
-                target: { value: message }
-              } as React.ChangeEvent<HTMLTextAreaElement>)
-              // Submit the form after a small delay to ensure the input is updated
-              setTimeout(() => {
-                inputRef.current?.form?.requestSubmit()
-                // Reset focus state after action button submission
-                setIsInputFocused(false)
-                inputRef.current?.blur()
-              }, INPUT_UPDATE_DELAY_MS)
-            }}
-            onCategoryClick={category => {
-              // Set the category in the input
-              handleInputChange({
-                target: { value: category }
-              } as React.ChangeEvent<HTMLTextAreaElement>)
-              // Focus the input
-              inputRef.current?.focus()
-            }}
-            inputRef={inputRef}
-            className="mt-2"
-          />
-        )}
+        {/* Subtle shiny upgrade pill under the input */}
+        <div className="max-w-3xl mx-auto w-full mt-3">
+          <PremiumUpgradeInline />
+        </div>
       </form>
     </div>
   )

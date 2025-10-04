@@ -6,9 +6,11 @@ import TextareaAutosize from 'react-textarea-autosize'
 import { Pencil } from 'lucide-react'
 
 import { cn } from '@/lib/utils'
+import { normalizeUserText } from '@/lib/utils/text'
 
 import { Button } from './ui/button'
 import { CollapsibleMessage } from './collapsible-message'
+import { MarkdownMessage } from './message'
 
 interface UserTextSectionProps {
   content: string
@@ -37,7 +39,7 @@ export const UserTextSection: React.FC<UserTextSectionProps> = ({
 
   const handleEditClick = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation()
-    setEditedContent(content)
+    setEditedContent(normalizeUserText(content))
     setIsEditing(true)
   }
 
@@ -51,7 +53,9 @@ export const UserTextSection: React.FC<UserTextSectionProps> = ({
     setIsEditing(false)
 
     try {
-      await onUpdateMessage(messageId, editedContent)
+      const normalized = normalizeUserText(editedContent)
+      setEditedContent(normalized)
+      await onUpdateMessage(messageId, normalized)
     } catch (error) {
       console.error('Failed to save message:', error)
     }
@@ -98,7 +102,7 @@ export const UserTextSection: React.FC<UserTextSectionProps> = ({
           <div className="flex flex-col gap-2">
             <TextareaAutosize
               value={editedContent}
-              onChange={e => setEditedContent(e.target.value)}
+              onChange={e => setEditedContent(normalizeUserText(e.target.value))}
               autoFocus
               onCompositionStart={handleCompositionStart}
               onCompositionEnd={handleCompositionEnd}
@@ -118,7 +122,12 @@ export const UserTextSection: React.FC<UserTextSectionProps> = ({
           </div>
         ) : (
           <div className="relative">
-            <div className="pr-10">{content}</div>
+            <div className="pr-10">
+              <MarkdownMessage
+                message={content}
+                className="max-w-none text-foreground prose-a:text-primary"
+              />
+            </div>
             <div
               className={cn(
                 'absolute top-0 right-0 transition-opacity',
@@ -133,6 +142,7 @@ export const UserTextSection: React.FC<UserTextSectionProps> = ({
                 size="icon"
                 className="rounded-full h-7 w-7"
                 onClick={handleEditClick}
+                aria-label="Edit message"
               >
                 <Pencil className="size-3.5" />
               </Button>

@@ -2,16 +2,18 @@
 
 import * as React from "react"
 import { Suspense } from "react"
-import { useSearchParams } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 function PaystackCallbackContent() {
   const search = useSearchParams()
   const reference = search.get("reference")
+  const router = useRouter()
   const [status, setStatus] = React.useState<string | null>(null)
   const [amountValid, setAmountValid] = React.useState<boolean | null>(null)
   const [error, setError] = React.useState<string | null>(null)
+  const [activating, setActivating] = React.useState(false)
 
   React.useEffect(() => {
     const verify = async () => {
@@ -30,6 +32,34 @@ function PaystackCallbackContent() {
     }
     verify()
   }, [reference])
+
+  // After verification success, poll billing status and redirect when premium is active
+  React.useEffect(() => {
+    let intervalId: any
+    const pollAndRedirect = async () => {
+      setActivating(true)
+      const start = Date.now()
+      while (Date.now() - start < 60000) {
+        try {
+          const res = await fetch('/api/billing/status', { cache: 'no-store' })
+          const data = await res.json()
+          if (data?.premium) {
+            router.push('/')
+            return
+          }
+        } catch {}
+        await new Promise(r => setTimeout(r, 2000))
+      }
+      setActivating(false)
+    }
+
+    if (status === 'success' && amountValid) {
+      pollAndRedirect()
+    }
+    return () => {
+      if (intervalId) clearInterval(intervalId)
+    }
+  }, [status, amountValid, router])
 
   return (
     <div className="w-full flex justify-center p-6">
@@ -53,6 +83,22 @@ function PaystackCallbackContent() {
                 ) : amountValid === true ? (
                   <p className="text-sm text-green-600 dark:text-green-500">Amount verified.</p>
                 ) : null}
+                {status === 'success' && amountValid ? (
+                  <p className="text-sm text-muted-foreground">
+                    {activating
+                      ? 'Activating Premium on your account… You will be redirected shortly.'
+                      : 'Premium activation pending. If not redirected automatically, continue below.'}
+                  </p>
+                ) : null}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => router.push('/')}
+                    className="text-sm underline"
+                  >
+                    Continue to home
+                  </button>
+                </div>
               </div>
             ) : (
               <p className="text-sm text-muted-foreground">Verifying reference {reference}...</p>

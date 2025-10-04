@@ -15,6 +15,7 @@ import {
   isToolTypePart
 } from '@/lib/types/dynamic-tools'
 import { cn } from '@/lib/utils'
+import { normalizeUserText } from '@/lib/utils/text'
 
 import { useAuthCheck } from '@/hooks/use-auth-check'
 import { useFileDropzone } from '@/hooks/use-file-dropzone'
@@ -147,7 +148,7 @@ export function Chat({
   })
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value)
+    setInput(normalizeUserText(e.target.value))
   }
 
   // Convert messages array to sections array
@@ -250,9 +251,11 @@ export function Chat({
         if (messageIndex === -1) return prevMessages
 
         const updatedMessages = [...prevMessages]
+        const normalizedContent = normalizeUserText(newContentText)
+
         updatedMessages[messageIndex] = {
           ...updatedMessages[messageIndex],
-          parts: [{ type: 'text', text: newContentText }]
+          parts: [{ type: 'text', text: normalizedContent }]
         }
 
         return updatedMessages

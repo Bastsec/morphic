@@ -4,7 +4,6 @@ import { generateId } from '@/lib/db/schema'
 
 import { ChangelogBanner } from '@/components/changelog-banner'
 import { Chat } from '@/components/chat'
-import PremiumBanner from '@/components/premium-banner'
 
 export default async function Page() {
   const id = generateId()
@@ -12,7 +11,6 @@ export default async function Page() {
     <>
       <Chat key={id} id={id} />
       <ChangelogBanner />
-      <PremiumBanner />
     </>
   )
 }

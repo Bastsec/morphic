@@ -330,6 +330,8 @@ export const userBilling = pgTable(
   ]
 ).enableRLS()
 
+// Exported type for user_billing rows
+export type UserBilling = InferSelectModel<typeof userBilling>
 // Payments ledger (immutable)
 export const payments = pgTable(
   'payments',

@@ -3,8 +3,9 @@ import { NextResponse } from "next/server"
 import { eq } from "drizzle-orm"
 
 import { db } from "@/lib/db"
-import { userBilling } from "@/lib/db/schema"
+import { userBilling, type UserBilling } from "@/lib/db/schema"
 import { createClient } from "@/lib/supabase/server"
+import { withRLS } from "@/lib/db/with-rls"
 
 export async function GET() {
   try {
@@ -15,9 +16,11 @@ export async function GET() {
       // Not signed in — return not premium to promote signup
       return NextResponse.json({ premium: false })
     }
-    const row = await db.query.userBilling.findFirst({
-      where: eq(userBilling.userId, userId)
-    })
+    const row = await withRLS<UserBilling | undefined>(userId, tx =>
+      tx.query.userBilling.findFirst({
+        where: eq(userBilling.userId, userId)
+      })
+    )
     const premium = row?.status === 'premium'
     return NextResponse.json({ premium, plan: row?.planCode ?? null })
   } catch (e: any) {
