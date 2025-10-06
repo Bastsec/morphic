@@ -49,15 +49,25 @@ jobs:
             SUPABASE_URL=${{ secrets.SUPABASE_URL }}
             SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
             MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }}
-          environmentVariables: >-
-            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
-            SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}
-            DATABASE_URL=${{ secrets.DATABASE_URL }}
-            DATABASE_RESTRICTED_URL=${{ secrets.DATABASE_RESTRICTED_URL }}
-            MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }}
-            AZURE_API_KEY=${{ secrets.AZURE_API_KEY }}
-            AZURE_BASE_URL=${{ secrets.AZURE_BASE_URL }}
           replaceEnvironmentVariables: false
           replaceSecrets: false
+
+      # Merge-only env var update so portal-defined vars are preserved.
+      - name: Update Container App environment variables (merge)
+        run: |
+          set -euo pipefail
+          # Set or update known runtime envs without removing any existing ones
+          az containerapp update \
+            --name chat \
+            --resource-group wapiflow \
+            --set-env-vars \
+              NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }} \
+              NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }} \
+              SUPABASE_URL=${{ secrets.SUPABASE_URL }} \
+              SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }} \
+              DATABASE_URL=${{ secrets.DATABASE_URL }} \
+              DATABASE_RESTRICTED_URL=${{ secrets.DATABASE_RESTRICTED_URL }} \
+              MORPHIC_MODELS_PROFILE=${{ vars.MORPHIC_MODELS_PROFILE }} \
+              AZURE_API_KEY=${{ secrets.AZURE_API_KEY }} \
+              AZURE_BASE_URL=${{ secrets.AZURE_BASE_URL }} \
+            --output none

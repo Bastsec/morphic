@@ -6,6 +6,7 @@ import { loadChat } from '@/lib/actions/chat'
 import { getCurrentUserId } from '@/lib/auth/get-current-user'
 
 import { Chat } from '@/components/chat'
+import ModelHypertextBanner from '@/components/model-hypertext-banner'
 
 export const maxDuration = 60
 
@@ -44,5 +45,12 @@ export default async function SearchPage(props: {
 
   const messages: UIMessage[] = chat.messages
 
-  return <Chat id={id} savedMessages={messages} />
+  return (
+    <>
+      <div className="w-full flex items-center justify-center pt-8 pb-4">
+        <ModelHypertextBanner />
+      </div>
+      <Chat id={id} savedMessages={messages} />
+    </>
+  )
 }

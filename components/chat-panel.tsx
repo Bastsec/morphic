@@ -21,7 +21,7 @@ import { ModelTypeSelector } from './model-type-selector'
 import { SearchModeSelector } from './search-mode-selector'
 import { UploadedFileList } from './uploaded-file-list'
 import PremiumUpgradeInline from './premium-upgrade-inline'
-import ModelHypertextBanner from './model-hypertext-banner'
+// Model banner moved to page-level for top placement
 
 // Constants for timing delays
 const INPUT_UPDATE_DELAY_MS = 10 // Delay to ensure input value is updated before form submission
@@ -165,8 +165,10 @@ export function ChatPanel({
   return (
     <div
       className={cn(
-        'w-full bg-background group/form-container shrink-0',
-        messages.length > 0 ? 'sticky bottom-0 px-2 pb-4' : 'px-6'
+        'w-full bg-background/80 backdrop-blur-sm group/form-container shrink-0',
+        messages.length > 0
+          ? 'sticky bottom-0 px-2 pb-4 pb-safe shadow-top border-t'
+          : 'px-6'
       )}
     >
       {messages.length === 0 && (
@@ -174,10 +176,6 @@ export function ChatPanel({
           <IconLogo className="size-12 text-muted-foreground" />
         </div>
       )}
-      {/* Subtle model banner at the top */}
-      <div className="max-w-3xl w-full mx-auto mb-2 text-center">
-        <ModelHypertextBanner />
-      </div>
       {uploadedFiles.length > 0 && (
         <UploadedFileList files={uploadedFiles} onRemove={handleFileRemove} />
       )}

@@ -350,6 +350,25 @@
   }
 }
 
+/* Safe-area utilities for iOS notch/home indicator */
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+@utility pt-safe {
+  padding-top: env(safe-area-inset-top);
+}
+
+/* Mobile scroll containment to prevent background page scroll bounce */
+@utility overscroll-y-contain {
+  overscroll-behavior-y: contain;
+}
+
+/* Optional subtle top shadow for sticky footers/headers */
+@utility shadow-top {
+  box-shadow: 0 -8px 16px -12px hsl(0 0% 0% / 0.25) inset;
+}
+
 @utility prose {
   /* Heading styles for prose */
   & h1 {

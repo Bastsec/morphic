@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 
 export default function PricingPage() {
   return (
-    <div className="w-full flex justify-center px-6 py-12">
+    <div className="w-full flex justify-center px-6 py-12 pb-28 sm:pb-12">
       <div className="w-full max-w-4xl mx-auto">
         <div className="mb-10 text-center">
           <h1 className="text-3xl font-semibold tracking-tight">Pricing</h1>
@@ -72,6 +72,12 @@ export default function PricingPage() {
               </p>
             </CardContent>
           </Card>
+        </div>
+      </div>
+      {/* Mobile sticky subscribe CTA */}
+      <div className="sm:hidden fixed bottom-0 inset-x-0 z-20 border-t bg-background/80 backdrop-blur px-4 py-3 pb-safe">
+        <div className="w-full max-w-4xl mx-auto">
+          <SubscribeButton className="w-full" label="Subscribe for KES 600" />
         </div>
       </div>
     </div>
