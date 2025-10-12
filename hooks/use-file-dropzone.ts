@@ -83,7 +83,7 @@ export function useFileDropzone({
                       ...f,
                       status: 'uploaded',
                       url: uploaded.url,
-                      name: uploaded.name,
+                      name: uploaded.filename ?? uploaded.name,
                       key: uploaded.key
                     }
                   : f

@@ -82,7 +82,12 @@ async function uploadFileToR2(file: File, userId: string, chatId: string) {
     const publicUrl = `${R2_PUBLIC_URL}/${filePath}`
 
     return {
+      // For UI message part compatibility
       filename: file.name,
+      // Common front-end fields used by dropzone state
+      name: file.name,
+      key: filePath,
+      // FileUIPart fields
       url: publicUrl,
       mediaType: file.type,
       type: 'file'

@@ -15,6 +15,7 @@ import type {
 import { Model } from '@/lib/types/models'
 
 import { fetchTool } from '../tools/fetch'
+import { createFileTools } from '../tools/file'
 import { createQuestionTool } from '../tools/question'
 import { createSearchTool } from '../tools/search'
 import { createTodoTools } from '../tools/todo'
@@ -97,6 +98,7 @@ export function createResearcher({
     const originalSearchTool = createSearchTool(model)
     const askQuestionTool = createQuestionTool(model)
     const todoTools = writer ? createTodoTools() : {}
+    const fileTools = createFileTools()
 
     let systemPrompt: string
     let activeToolsList: (keyof ResearcherTools)[] = []
@@ -110,14 +112,14 @@ export function createResearcher({
           '[Researcher] Quick mode: maxSteps=20, tools=[search, fetch]'
         )
         systemPrompt = QUICK_MODE_PROMPT
-        activeToolsList = ['search', 'fetch']
+        activeToolsList = ['search', 'fetch', 'fileRead', 'fileWrite']
         maxSteps = 20
         searchTool = wrapSearchToolForQuickMode(originalSearchTool)
         break
 
       case 'planning':
         systemPrompt = PLANNING_MODE_PROMPT
-        activeToolsList = ['search', 'fetch']
+        activeToolsList = ['search', 'fetch', 'fileRead', 'fileWrite']
         if (writer && 'todoWrite' in todoTools) {
           activeToolsList.push('todoWrite', 'todoRead')
         }
@@ -131,7 +133,7 @@ export function createResearcher({
       case 'adaptive':
       default:
         systemPrompt = ADAPTIVE_MODE_PROMPT
-        activeToolsList = ['search', 'fetch']
+        activeToolsList = ['search', 'fetch', 'fileRead', 'fileWrite']
         if (writer && 'todoWrite' in todoTools) {
           activeToolsList.push('todoWrite', 'todoRead')
         }
@@ -148,6 +150,8 @@ export function createResearcher({
       search: searchTool,
       fetch: fetchTool,
       askQuestion: askQuestionTool,
+      fileRead: fileTools.fileRead,
+      fileWrite: fileTools.fileWrite,
       ...todoTools
     } as ResearcherTools
 

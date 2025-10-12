@@ -10,12 +10,15 @@ import type { fetchTool } from '../tools/fetch'
 import type { createQuestionTool } from '../tools/question'
 import type { createSearchTool } from '../tools/search'
 import type { createTodoTools } from '../tools/todo'
+import type { createFileTools } from '../tools/file'
 
 // Define the tools type for researcher agent
 export type ResearcherTools = {
   search: ReturnType<typeof createSearchTool>
   fetch: typeof fetchTool
   askQuestion: ReturnType<typeof createQuestionTool>
+  fileRead: ReturnType<typeof createFileTools>['fileRead']
+  fileWrite: ReturnType<typeof createFileTools>['fileWrite']
 } & ReturnType<typeof createTodoTools>
 
 // Type for the researcher agent
@@ -47,6 +50,9 @@ export type ResearcherToolInvocation =
   | QuestionToolInvocation
   | TodoWriteToolInvocation
   | TodoReadToolInvocation
+  // file tools
+  | UIToolInvocation<ResearcherTools['fileRead']>
+  | UIToolInvocation<ResearcherTools['fileWrite']>
 
 // Helper type to extract tool names
 export type ResearcherToolName = keyof ResearcherTools

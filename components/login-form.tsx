@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/card'
 import { IconGoogle, IconLogo } from '@/components/ui/icons'
 import PremiumUpgradeInline from './premium-upgrade-inline'
+import { WhatsAppLoginForm } from './whatsapp-login-form'
 
 export function LoginForm({
   className,
@@ -61,7 +62,9 @@ export function LoginForm({
             <IconLogo className="size-12" />
             Sign in to Bastion
           </CardTitle>
-          <CardDescription>Use your Google account to continue</CardDescription>
+          <CardDescription>
+            Use Google or WhatsApp credentials to continue
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <div className="flex flex-col gap-4">
@@ -76,9 +79,14 @@ export function LoginForm({
               {isLoading ? 'Redirecting...' : 'Continue with Google'}
             </Button>
             {error && <p className="text-sm text-red-500">{error}</p>}
+            <div className="relative my-1 text-center text-xs uppercase tracking-wide text-muted-foreground">
+              <span className="relative z-10 bg-card px-2">Or</span>
+              <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-border" />
+            </div>
+            <WhatsAppLoginForm />
           </div>
           <div className="mt-6 text-center text-sm text-muted-foreground">
-            New to Bation? Use the button above to get started.
+            New to Bastion? Pick a method above to get started.
           </div>
         </CardContent>
       </Card>

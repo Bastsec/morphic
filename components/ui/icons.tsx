@@ -72,4 +72,31 @@ function IconGoogle({ className, ...props }: React.ComponentProps<'svg'>) {
   )
 }
 
-export { IconGoogle, IconLogo, IconLogoOutline }
+function IconChatBubble({
+  className,
+  ...props
+}: React.ComponentProps<'svg'>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      role="img"
+      xmlns="http://www.w3.org/2000/svg"
+      className={cn('h-4 w-4', className)}
+      {...props}
+    >
+      <path
+        d="M5 4h14a1 1 0 0 1 1 1v9.5a1 1 0 0 1-1 1H10l-4.6 3.4A.6.6 0 0 1 5 18.5V5a1 1 0 0 1 1-1Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <circle cx="9" cy="9.5" r="1" fill="currentColor" />
+      <circle cx="12" cy="9.5" r="1" fill="currentColor" />
+      <circle cx="15" cy="9.5" r="1" fill="currentColor" />
+    </svg>
+  )
+}
+
+export { IconChatBubble, IconGoogle, IconLogo, IconLogoOutline }
